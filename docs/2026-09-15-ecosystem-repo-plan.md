@@ -118,3 +118,39 @@ hypercast-relay（开源发布）        主仓库（客户端/Host，消费协�
 | 3 | 托管平台 | GitHub 公开为主；国内可达性可后续加镜像（GitCode 等） |
 | 4 | protocol 子集开源边界 | 服务端依赖部分（配对握手/加密）开源，protocol-kit 全量与客户端保持闭源——确认此边界 |
 | 5 | 目录服务运营主体与部署地 | 合规敏感项（中心化收录公众中继），部署前必须定 |
+
+## 9. 并行开发体系（worktree 隔离）
+
+多任务/多 agent 并行开发采用 **git worktree 隔离**：每个任务一棵独立工作树，互不踩踏，完成后合并回 `main`。
+
+```bash
+# 两仓库均自带管理脚本（内容一致，敏感串清单须两边同步扩展）
+scripts/worktree.sh new m1-server-extract   # 建工作树：../<repo>-worktrees/m1-server-extract，分支 wt/m1-server-extract
+scripts/worktree.sh list                    # 状态总览 + 并发槽位
+# ……在工作树内开发、测试
+scripts/worktree.sh check                   # 脱敏门禁（合并前必跑，敏感串清单见脚本头）
+# 回主仓库合并，然后清理
+scripts/worktree.sh rm m1-server-extract
+```
+
+约定：
+
+- **主分支 `main`**（开源惯例）；工作分支一律 `wt/<任务名>` 前缀，便于识别与批量清理。
+- **并发软上限 10** 个工作树（脚本内置；确需超过 `FORCE=1`）。超过 10 个通常说明任务拆分过细或该合并了。
+- **合并三件套**：工作树内测试绿 + `check` 脱敏门禁绿 + 主仓库 `git merge --no-ff wt/<name>`（保留任务边界可回溯）。推 GitHub 后切换 PR 工作流。
+- **worktree 目录在仓库平级**（`../<repo>-worktrees/`），天然不进 git 历史，无需 gitignore。
+- **每个工作树独立 `target/`/`node_modules`**（构建产物不共享），磁盘换隔离，10 并发规模完全可接受。
+
+**目录迁移（本地 → GitHub / 换父目录）**：git 仓库自包含，`git remote add origin … && git push -u origin main` 即可随时上远端；本地目录改名/移动零成本，但 **worktree 的 `.git` 指针记录主仓库绝对路径——迁移后必须先跑 `git worktree repair`**，再继续用。
+
+## 10. 公开前 checklist（仓库随时可开源的最后一道闸）
+
+"从创建起即开源状态" 的例行审查点，逐项过完才 `git push` 到公开远端：
+
+1. LICENSE 已定稿并落在仓库根（待拍板项 1）。
+2. `scripts/worktree.sh check` 全绿（敏感串清单复核一遍，含新增 pattern）。
+3. commit 历史走查：无生产地址/内部信息混入（奠基起全新史就是为这一步零成本）。
+4. CI 配置就绪（`cargo test` + schema 校验 + 脱敏检查 job）。
+5. README 可被陌生人理解：是什么/怎么部署/安全模型一句话。
+6. 主仓库侧镜像账本已登记本次同步（避免双源漂移）。
+
