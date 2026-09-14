@@ -295,6 +295,7 @@ pub fn app(config: RelayConfig) -> Router {
 fn app_with_state(state: AppState) -> Router {
     Router::new()
         .route("/healthz", get(health))
+        .route("/speedtest", get(speedtest))
         .route("/metrics", get(metrics_endpoint))
         .route("/v1/hosts/:mailbox_id/register", post(register_host))
         .route(
@@ -1323,6 +1324,34 @@ async fn register_host(
     Ok(StatusCode::NO_CONTENT)
 }
 
+/// 带宽实测端点：返回 `?bytes=N`（默认 1 MiB）固定模式响应体，供社区目录
+/// 探测器实测节点信令口吞吐。口径：TCP/HTTPS 信令口实测，作为节点网络容量
+/// 的近似指标（非 TURN UDP 吞吐，目录网页须标注该口径）。
+#[derive(serde::Deserialize)]
+struct SpeedtestParams {
+    bytes: Option<usize>,
+}
+
+async fn speedtest(
+    axum::extract::Query(params): axum::extract::Query<SpeedtestParams>,
+) -> axum::response::Response {
+    const MIN_BYTES: usize = 1024;
+    const MAX_BYTES: usize = 8 * 1024 * 1024;
+    let bytes = params
+        .bytes
+        .unwrap_or(1024 * 1024)
+        .clamp(MIN_BYTES, MAX_BYTES);
+    let body = vec![0x5Au8; bytes];
+    (
+        [(
+            axum::http::header::HeaderName::from_static("content-type"),
+            axum::http::header::HeaderValue::from_static("application/octet-stream"),
+        )],
+        body,
+    )
+        .into_response()
+}
+
 /// 账号设备发现(测试阶段无鉴权, 正式版应加账号 token):
 /// 只暴露公开指纹, 连接凭据仍需经配对(扫码)获得。
 async fn account_hosts(
@@ -2303,6 +2332,50 @@ mod tests {
                 .unwrap(),
             "*"
         );
+    }
+
+    #[tokio::test]
+    async fn speedtest_serves_capped_payload() {
+        use axum::body::Body;
+        use tower::util::ServiceExt;
+
+        let router = app(config(false));
+
+        let resp = router
+            .clone()
+            .oneshot(
+                axum::http::Request::builder()
+                    .method("GET")
+                    .uri("/speedtest")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(resp.status(), 200);
+        assert_eq!(
+            resp.headers().get("content-type").unwrap(),
+            "application/octet-stream"
+        );
+        let body = axum::body::to_bytes(resp.into_body(), 16 * 1024 * 1024)
+            .await
+            .unwrap();
+        assert_eq!(body.len(), 1024 * 1024, "default 1 MiB");
+
+        let resp = router
+            .oneshot(
+                axum::http::Request::builder()
+                    .method("GET")
+                    .uri("/speedtest?bytes=999999999")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let body = axum::body::to_bytes(resp.into_body(), 16 * 1024 * 1024)
+            .await
+            .unwrap();
+        assert_eq!(body.len(), 8 * 1024 * 1024, "capped at 8 MiB");
     }
 
     fn config(enabled: bool) -> RelayConfig {
