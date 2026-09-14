@@ -17,21 +17,19 @@ MAX_CONCURRENT=10
 
 # 开源卫生：合并/公开前禁止出现的敏感串（在此数组扩展；同步另一仓库的副本）
 SENSITIVE_PATTERNS=(
-  "dyyzREDACT"       # 生产域名
-  "serialAREDACT"        # 测试设备 serial
-  "serialBREDACT"          # 测试设备 serial
-  "/UsersREDACT/"        # 本机绝对路径
+  "dyyz""1993"      # 生产域名（拼接书写：文件内不得出现完整真串）
+  "9ca""8f39"       # 测试设备 serial
+  "WXS""YD"         # 测试设备 serial
+  "/Use""rs/"       # 本机绝对路径（拼接书写）
 )
 
-# 豁免表：定义敏感串的文件自身（pattern 数组与卫生清单说明文档，语义上必然包含这些词）
+# 豁免表（当前为空：pattern 拼接书写后门禁文件自身不再含完整真串）
 EXEMPT_FILES=(
-  "scripts/worktree.sh"
-  "docs/2026-09-15-ecosystem-repo-plan.md"
 )
 
 is_exempt() {
   local f="$1" e
-  for e in "${EXEMPT_FILES[@]}"; do [ "$f" = "$e" ] && return 0; done
+  for e in ${EXEMPT_FILES[@]+"${EXEMPT_FILES[@]}"}; do [ "$f" = "$e" ] && return 0; done
   return 1
 }
 
@@ -77,10 +75,10 @@ cmd_check() {
   local fail=0 pattern hits f
   local excludes=()
   local e
-  for e in "${EXEMPT_FILES[@]}"; do excludes+=( ":(exclude)$e" ); done
+  for e in ${EXEMPT_FILES[@]+"${EXEMPT_FILES[@]}"}; do excludes+=( ":(exclude)$e" ); done
   for pattern in "${SENSITIVE_PATTERNS[@]}"; do
     hits=""
-    hits="$(git grep -I -l -F -- "$pattern" -- . "${excludes[@]}" 2>/dev/null || true)"
+    hits="$(git grep -I -l -F -- "$pattern" -- . ${excludes[@]+"${excludes[@]}"} 2>/dev/null || true)"
     while IFS= read -r f; do
       is_exempt "$f" && continue
       grep -q -I -F -- "$pattern" "$f" 2>/dev/null && hits="$hits

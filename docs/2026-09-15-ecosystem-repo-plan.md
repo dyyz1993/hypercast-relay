@@ -70,7 +70,7 @@ hypercast-relay-directory/
 **原则：内容可以复制，历史绝不携带。** 主仓库历史含生产地址、内部战报、测试设备标识，一律不进开源仓库。
 
 1. **全新 git 历史**：抽取代码以新提交进入，不 cherry-pick / 不 subtree 保留原史。
-2. **脱敏 grep 门禁**：提交前跑敏感串清单（初始版）：`dyyzREDACT` / `replay.dyyzREDACT.cn` / 生产端口与分配口段 / 设备 serial（`serialAREDACT`、`serialBREDACT…`）/ 内部路径 `/UsersREDACT/…`。示例一律用 `relay.example.com`。CI 落一条检查 job。
+2. **脱敏 grep 门禁**：提交前跑敏感串清单（初始版）：生产域名 / 生产端口与分配口段 / 测试设备 serial / 本机绝对路径前缀（完整串见 worktree.sh 拼接定义，文档中不落明文）。示例一律用 `relay.example.com`。CI 落一条检查 job。
 3. **LICENSE 第一个 commit 就位**（待拍板，见 §8）；无 LICENSE 前仓库不公开。
 4. **不带内部宪法**：AGENTS.md（内部规章，含事故细节与生产信息）不复制；开源仓库用 README + CONTRIBUTING 表达规范。
 5. **CI 从第一天绿**：`cargo test` + schema 校验 + 脱敏检查。
