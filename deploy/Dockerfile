@@ -1,7 +1,7 @@
 # 多阶段构建：Rust 编译 → 精简运行镜像
 FROM rust:1.82-slim AS build
 WORKDIR /build
-COPY Cargo.toml ./
+COPY Cargo.toml Cargo.lock ./
 COPY protocol-kit ./protocol-kit
 COPY server ./server
 RUN cargo build --release -p hypercast-rendezvous
