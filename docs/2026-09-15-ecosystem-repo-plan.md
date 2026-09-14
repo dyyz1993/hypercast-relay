@@ -169,3 +169,32 @@ scripts/worktree.sh rm m1-server-extract
 - **移植成本（诚实口径）**：axum/tokio 长驻模型不能直接上 Workers——API 层需 Workers 版重写，邮箱/会话状态放 DO，落盘 JSON 换 KV/D1；**协议层零成本**（protocol-kit 纯函数禁 IO 即为 WASM 准备，编 WASM 后 transcript 逻辑原样复用，对拍 fixtures 继续锁定）。
 - **schema 演进**：`register` 增加 `capabilities` 字段（v1.1，向后兼容）；目录网页展示中统能力，禁止信令节点被误读为有兜底。
 - CF Workers 版实现排期在 M4 客户端接线之后（先立 VPS 形态，CF 形态第二波）。
+
+## 13. 多区中继（"四区"）与域名规划（2026-09-15 定稿）
+
+**分层结论：CF 能承包 DNS 分流与信令层，TURN 中继本体必须各区别 VPS。**
+
+| 层 | CF 能否实现 | 形态 |
+|---|---|---|
+| DNS 四区分流 | ✅ 免费 | 分区子域 + 信令侧按客户端来源下发（应用层 geo-steering，零成本）；付费可换 CF LB Geo Steering + 自动 failover |
+| 信令 rendezvous 四区 | ✅ 两种 | ①Workers 版=一次部署天然全球边缘（比四区更广，排 M4 后移植）②CF 橙云反代各区别 VPS（HTTP/WSS 橙云支持） |
+| TURN 中继四区 | ❌ | Workers 无 UDP（平台无解）；**各区别 VPS 部署 coturn**，CF 只做 DNS（灰云 only） |
+
+**DNS 记录铁律**：TURN/STUN 记录必须**灰云（DNS only）**——CF 橙云只代理 HTTP/HTTPS 特定端口，UDP 中继端口不在代理范围；信令/目录可橙云。
+
+**域名分层模板**（域名待拍板，候选：现有 `lpm1.top` / `drel.app` / 新购；勿动 DNSPod 上的生产域名）：
+
+```
+signal.<domain>      橙云/Workers 自定义域   信令（全球边缘）
+turn-hk.<domain>     灰云 A → 香港 VPS
+turn-sg.<domain>     灰云 A → 新加坡 VPS
+turn-us.<domain>     灰云 A → 美西 VPS
+turn-eu.<domain>     灰云 A → 欧洲/东京 VPS
+dir.<domain>         橙云 → 目录服务源站
+```
+
+**与本栈的天然配合**：rendezvous 本就按 `HYPERCAST_STUN_URLS/TURN_URLS` 下发 ICE 配置——按客户端来源下发对应区 TURN 域名 = 免费版 geo-steering；目录 prober 自动探测/测速各区节点，四区健康与带宽在网页一目了然。
+
+**四区选址建议**（office-first、国内+海外用户）：香港（国内最优）+ 新加坡 + 美西 + 东京/法兰克福二选一；轻量 VPS 预算 ~$20-40/月总。
+
+**待拍板**：① 用哪个域名（或新购）② 四区选址与 VPS 预算 ③ 信令走 Workers 移植还是先橙云反代 VPS。
