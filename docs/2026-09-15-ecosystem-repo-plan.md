@@ -198,3 +198,31 @@ dir.<domain>         橙云 → 目录服务源站
 **四区选址建议**（office-first、国内+海外用户）：香港（国内最优）+ 新加坡 + 美西 + 东京/法兰克福二选一；轻量 VPS 预算 ~$20-40/月总。
 
 **待拍板**：① 用哪个域名（或新购）② 四区选址与 VPS 预算 ③ 信令走 Workers 移植还是先橙云反代 VPS。
+
+## 14. CF 能力全景与 Calls TURN（2026-09-15 核实）
+
+**修正一个认知：CF 不只有"做不了中继"，它有托管 TURN 产品（Cloudflare Calls TURN）。**
+
+### 14.1 Calls TURN = 第三种 TURN 来源
+
+- API 实锤：`POST /accounts/{id}/calls/turn_keys`（REST 发凭证，与 coturn HMAC 同位）；入口 `turn.cloudflare.com`（全球 anycast）。
+- 接入：rendezvous 新增凭证下发模式（调 CF API 建临时 key），`HYPERCAST_TURN_URLS` 配 `turn:turn.cloudflare.com:3478?transport=udp`——**只配 UDP transport 即守住 UDP-only 铁律**。
+- 定位：与"自托管 coturn / 社区中继"并存的第三源，官方版冷启动可白嫖免费额度；闭源托管依赖 CF，不进自托管默认路径。
+- 开通条件：dashboard 启用 Calls + API token 相应权限（本仓自动化 token 为只读级，创建实测返回 10000 Authentication error）。
+
+### 14.2 CF 全景用法（本生态可吃的能力）
+
+| 能力 | 用途 | 状态 |
+|---|---|---|
+| Pages | `lpm1.top` 子域静态站（官网/文档/目录静态壳），连 GitHub 自动部署 | 即用 |
+| Workers | 信令全球边缘（§12）/ 目录 API | M4 后移植 |
+| KV / D1 / R2 | Workers 版目录的数据层 | 随 Workers |
+| **Calls TURN** | 托管 TURN 第三源（14.1） | 需 dashboard 开通 |
+| **Tunnel（cloudflared）** | **免开安全组暴露 replay 目录/信令**：cloudflared 出站建隧道，CF 边缘回源，绑定 `dir.lpm1.top`——入站端口一个都不用开 | 需 dashboard 建 Tunnel |
+| DNS | §13 分区分流 | 需可写 token |
+| Cron Triggers | 探测器托管化 | 随 Workers |
+| Access | 目录管理后台零信任 | 按需 |
+
+### 14.3 权限现状（2026-09-15 实测）
+
+自动化 token 仅只读（zones 可列、DNS 写/Calls 写均 10000）；DNS 安排、Tunnel 创建、Calls 开通三类操作需用户 dashboard 完成或签发带权限的 API token。
