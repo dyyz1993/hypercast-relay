@@ -1,0 +1,311 @@
+{
+  "clipboard_json": {
+    "dir": "host",
+    "json": "{\"dir\":\"host\",\"text\":\"copied text\",\"type\":\"clipboard\"}",
+    "text": "copied text"
+  },
+  "display_json": {
+    "id": 4294961,
+    "json": "{\"id\":4294961,\"type\":\"display\"}"
+  },
+  "hks1": {
+    "chord_ctrl_opt_cmd_return": {
+      "hex": "484b533101030400003b0000000000040000010000003d00000000000c0000010000003600000000001c0000010000002400000000001c000001005a",
+      "slot": 3
+    },
+    "single_esc_down": {
+      "hex": "484b53310107010000350000000000000000010000",
+      "slot": 7
+    }
+  },
+  "hvm1": {
+    "set_active": {
+      "command_id": 1,
+      "hex": "48564d31010101000000000000000005000000000000000100000000000000000000000000000000",
+      "revision": 5
+    }
+  },
+  "key_json": {
+    "code": "KeyA",
+    "json": "{\"code\":\"KeyA\",\"type\":\"key\"}"
+  },
+  "lan_discovery": {
+    "announcement_name_with_spaces": {
+      "display_name": "My Home Mac Pro",
+      "text": "HYPERCAST_HOST/1 host-000102030405060708090a0b 9002 9003 My Home Mac Pro"
+    },
+    "announcement_valid": {
+      "api_port": 9003,
+      "display_name": "Studio Mac",
+      "instance_id": "host-000102030405060708090a0b",
+      "source_host": "192.168.1.10",
+      "text": "HYPERCAST_HOST/1 host-000102030405060708090a0b 9002 9003 Studio Mac",
+      "video_port": 9002
+    },
+    "hlp1_transcript": {
+      "hex": "484c5031b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecf",
+      "nonce_hex": "b0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecf"
+    },
+    "identity_proof": {
+      "host_public_key_raw_hex": "e7f162a10bec559afea195e4dce84b69568d5d2cb0963eb446c0685e2b17f2f0",
+      "protocol": "hypercast-lan-host-proof/1",
+      "signature_hex": "9c10cf29c6184852cdb7253b3b3cfdf5ba83f540674a0b2e84474a4505ab9923e9b179c9a2c4dc54fac5fe05ba3269b7bc156a88dd5725b0bbddddea76eea608"
+    },
+    "probe_hex": "4859504552434153545f444953434f5645522f31",
+    "promotion": {
+      "expected_instance_id": "host-000102030405060708090a0b",
+      "fingerprint": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "fingerprint_sha256_prefixed": "sha256:000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    }
+  },
+  "lan_p2p": {
+    "answer_signature_v1": {
+      "host_public_key_raw_hex": "e7f162a10bec559afea195e4dce84b69568d5d2cb0963eb446c0685e2b17f2f0",
+      "signature_hex": "0e03096b1e3fc960ea527ecad5f5ec916076e09781cff7224c112c668f4fa6db2d8d4d7f327c99c19e45ee844be6884d66c903b95e573a42461f0afd0dbfa90f",
+      "transcript_hex": "484c413101010101010101010101010101010101988180bf0c9328c9e8bd082755c647048ae82481fd06799bad05f2e1a4e1339c0db52f4076c082518412afd3dd3576e2cb0c63703fd7fed5e23ade60efef31d9c945cbf2a5602002141e2fb9d17054d6ca069951df73f49d1f8aca87f9878f60a73eb3da02de00d70b9181e87c353f7d426a0e085c4e14ef4314a327639fa6520202020202020202020202020202020202020202020202020202020202020202"
+    },
+    "answer_transcript_v1": {
+      "answer_sdp": "answer",
+      "hex": "484c413101010101010101010101010101010101988180bf0c9328c9e8bd082755c647048ae82481fd06799bad05f2e1a4e1339c0db52f4076c082518412afd3dd3576e2cb0c63703fd7fed5e23ade60efef31d9648aa5c579fb30f38af744d97d6ec840c7a91277a499a0d780f3e7314eca090ba73eb3da02de00d70b9181e87c353f7d426a0e085c4e14ef4314a327639fa6520202020202020202020202020202020202020202020202020202020202020202",
+      "offer_sdp": "offer"
+    },
+    "answer_transcript_v2": {
+      "answer_sdp": "main-answer",
+      "hex": "484c4132010101010101010101010101010101012ce3c5befe68b61824b9e81f075b486179ee85fdd2ec3e5341d1b0ea0d17d9e0cfbf4be4ff4d41f931fa41dbc26a7557d7ffb791b04a90bc5197c7f1d5b3d8abd70f862580dc8064ff7ab918997a030e643d1f118881ce267135300596f39e95fb212d9bd1c8d19e2966b3e8b63faf9df250297fe012736536b899be240c9df7648aa5c579fb30f38af744d97d6ec840c7a91277a499a0d780f3e7314eca090ba73eb3da02de00d70b9181e87c353f7d426a0e085c4e14ef4314a327639fa6520202020202020202020202020202020202020202020202020202020202020202",
+      "offer_sdp": "main-offer",
+      "realtime_input_answer_sdp": "input-answer",
+      "realtime_input_offer_sdp": "input-offer"
+    },
+    "inputs": {
+      "client_spki_hex": "04040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404",
+      "host_key_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+      "nonce_hex": "0202020202020202020202020202020202020202020202020202020202020202",
+      "session_hex": "01010101010101010101010101010101"
+    },
+    "offer_transcript_v1": {
+      "hex": "484c4f3101010101010101010101010101010101988180bf0c9328c9e8bd082755c647048ae82481fd06799bad05f2e1a4e1339c648aa5c579fb30f38af744d97d6ec840c7a91277a499a0d780f3e7314eca090ba73eb3da02de00d70b9181e87c353f7d426a0e085c4e14ef4314a327639fa6520202020202020202020202020202020202020202020202020202020202020202",
+      "offer_sdp": "offer"
+    },
+    "offer_transcript_v2": {
+      "hex": "484c4f32010101010101010101010101010101012ce3c5befe68b61824b9e81f075b486179ee85fdd2ec3e5341d1b0ea0d17d9e0d70f862580dc8064ff7ab918997a030e643d1f118881ce267135300596f39e95648aa5c579fb30f38af744d97d6ec840c7a91277a499a0d780f3e7314eca090ba73eb3da02de00d70b9181e87c353f7d426a0e085c4e14ef4314a327639fa6520202020202020202020202020202020202020202020202020202020202020202",
+      "offer_sdp": "main-offer",
+      "realtime_input_offer_sdp": "input-offer"
+    }
+  },
+  "pointer": {
+    "action": 1,
+    "button": 2,
+    "dx": 0.0,
+    "dy": 0.0,
+    "hex": "010102000000f742000035c200000000000000000000f04400008744",
+    "vh": 1080.0,
+    "vw": 1920.0,
+    "x": 123.5,
+    "y": -45.25
+  },
+  "pointer_delta": {
+    "action": 3,
+    "button": -1,
+    "dx": 3.5,
+    "dy": -1.25,
+    "hex": "0103ffff0000000000000000000060400000a0bf0000000000000000",
+    "vh": 0.0,
+    "vw": 0.0,
+    "x": 0.0,
+    "y": 0.0
+  },
+  "quality_binary": {
+    "applied_0x0e": {
+      "bitrate_bps": 8000000,
+      "fps": 60,
+      "hex": "00000000000000030000003c00000000007a12000102",
+      "reason": 2,
+      "report_revision": 3,
+      "tier": 1
+    },
+    "ceilings": {
+      "auto": 20000000,
+      "clear": 2000000,
+      "hd": 8000000,
+      "original": 20000000
+    },
+    "fps_tiers": [
+      30,
+      60,
+      90,
+      144
+    ],
+    "preference_0x15": {
+      "hex": "0000000615020000005a",
+      "preset_code": 2,
+      "requested_fps": 90
+    }
+  },
+  "quality_json": {
+    "bitrate": 8000000,
+    "json": "{\"bitrate\":8000000,\"preset\":\"hd\",\"type\":\"quality\"}",
+    "preset": "hd"
+  },
+  "text_json": {
+    "json": "{\"text\":\"hello hypercast\",\"type\":\"text\"}",
+    "text": "hello hypercast"
+  },
+  "wheel": {
+    "delta_x": -2.5,
+    "delta_y": 8.0,
+    "hex": "020000c94200007042000020c0000000410000f04400008744",
+    "vh": 1080.0,
+    "vw": 1920.0,
+    "x": 100.5,
+    "y": 60.0
+  },
+  "widget_layout": {
+    "expected": {
+      "corrupted_decoded": {
+        "anchors": [
+          {
+            "alpha": 1.0,
+            "kind": "VOICE_BAR",
+            "scale": 1.5,
+            "visible": true,
+            "x": 1.0,
+            "y": 0.0
+          },
+          {
+            "alpha": 0.9,
+            "kind": "ROUTE_CHIP",
+            "scale": 0.8,
+            "visible": true,
+            "x": 0.2,
+            "y": 0.2
+          }
+        ],
+        "video_offset_y": -80
+      },
+      "legacy_v1_decoded": {
+        "anchors": [
+          {
+            "alpha": 1.0,
+            "kind": "QUICK_BAR",
+            "scale": 1.15,
+            "visible": true,
+            "x": 0.3,
+            "y": 0.7
+          }
+        ],
+        "video_offset_y": 0
+      },
+      "normal_decoded": {
+        "anchors": [
+          {
+            "alpha": 0.6,
+            "kind": "VOICE_BAR",
+            "scale": 1.0,
+            "visible": true,
+            "x": 0.5,
+            "y": 0.92
+          },
+          {
+            "alpha": 1.0,
+            "kind": "ROUTE_CHIP",
+            "scale": 0.85,
+            "visible": false,
+            "x": 0.12,
+            "y": 0.08
+          },
+          {
+            "alpha": 0.8,
+            "kind": "SCROLL_PAD",
+            "scale": 1.15,
+            "visible": true,
+            "x": 0.9,
+            "y": 0.4
+          }
+        ],
+        "video_offset_y": 36
+      }
+    },
+    "inputs": {
+      "corrupted": {
+        "schema": 2,
+        "video_offset_y": -80,
+        "widgets": [
+          {
+            "alpha": 5.0,
+            "kind": "VOICE_BAR",
+            "scale": 9.0,
+            "visible": true,
+            "x": 1.7,
+            "y": -0.3
+          },
+          {
+            "alpha": 1.0,
+            "kind": "MYSTERY_BAR",
+            "scale": 1.0,
+            "visible": true,
+            "x": 0.5,
+            "y": 0.5
+          },
+          {
+            "alpha": 0.9,
+            "kind": "ROUTE_CHIP",
+            "scale": 0.8,
+            "visible": true,
+            "x": 0.2,
+            "y": 0.2
+          },
+          {
+            "alpha": 0.7,
+            "kind": "ROUTE_CHIP",
+            "scale": 1.2,
+            "visible": false,
+            "x": 0.4,
+            "y": 0.4
+          }
+        ]
+      },
+      "legacy_v1": {
+        "schema": 1,
+        "widgets": [
+          {
+            "kind": "QUICK_BAR",
+            "size": "LARGE",
+            "x": 0.3,
+            "y": 0.7
+          }
+        ]
+      },
+      "normal": {
+        "schema": 2,
+        "video_offset_y": 36,
+        "widgets": [
+          {
+            "alpha": 0.6,
+            "kind": "VOICE_BAR",
+            "scale": 1.0,
+            "visible": true,
+            "x": 0.5,
+            "y": 0.92
+          },
+          {
+            "alpha": 1.0,
+            "kind": "ROUTE_CHIP",
+            "scale": 0.85,
+            "visible": false,
+            "x": 0.12,
+            "y": 0.08
+          },
+          {
+            "alpha": 0.8,
+            "kind": "SCROLL_PAD",
+            "scale": 1.15,
+            "visible": true,
+            "x": 0.9,
+            "y": 0.4
+          }
+        ]
+      }
+    },
+    "schema_version": 2
+  }
+}

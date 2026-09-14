@@ -1,0 +1,31 @@
+# 自托管单节点示例：rendezvous 服务端（TURN 由系统 coturn 提供，见 README）
+# 遥测上报为 opt-in：不设 HYPERCAST_DIRECTORY_URL 则完全关闭。
+services:
+  rendezvous:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    image: hypercast-relay:latest
+    container_name: hypercast-rendezvous
+    restart: unless-stopped
+    ports:
+      - "8443:8443"            # 信令 API（控制面，TCP 合规）
+    environment:
+      HYPERCAST_RELAY_BIND: "0.0.0.0:8443"
+      # 对外公布的信令地址（客户端用它建会话；按你的域名/证书改写）
+      HYPERCAST_RELAY_PUBLIC_URL: "wss://relay.example.com/v1/relay"
+      # ICE/TURN 下发（指向你的 coturn；TURN 必须 UDP-only）
+      HYPERCAST_STUN_URLS: "stun:relay.example.com:3478"
+      HYPERCAST_TURN_URLS: "turn:relay.example.com:3478"
+      HYPERCAST_TURN_SHARED_SECRET: "change-me-32-bytes-minimum-secret!!"
+      # —— 可选：加入社区中继目录（聚合遥测，opt-in）——
+      # HYPERCAST_DIRECTORY_URL: "https://directory.example.com"
+      # HYPERCAST_NODE_ID: "my-node"
+      # HYPERCAST_NODE_PUBLIC_URL: "https://relay.example.com:8443"
+    volumes:
+      - rendezvous-state:/state
+      # 持久化（邮箱/凭据状态），容器重建不丢配对
+      # HYPERCAST_RELAY_STATE_FILE 默认未设=纯内存；生产建议 /state/relay.json
+
+volumes:
+  rendezvous-state:
