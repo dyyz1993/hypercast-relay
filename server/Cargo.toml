@@ -1,0 +1,31 @@
+[package]
+name = "hypercast-rendezvous"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Hypercast rendezvous 服务端（自托管中继节点栈）"
+
+[[bin]]
+name = "hypercast-rendezvous"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+axum = { version = "0.7.9", features = ["ws"] }
+base64 = "0.22"
+futures = "0.3"
+hypercast-protocol-kit = { path = "../protocol-kit" }
+ring = "0.17"
+p256 = { version = "0.13", features = ["ecdsa", "ecdh", "pkcs8"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+subtle = "2.6"
+tokio = { version = "1.40", features = ["rt-multi-thread", "sync", "macros", "time", "net", "io-util", "fs", "signal", "process"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+# 遥测上报（opt-in，仅聚合计数）
+ureq = { version = "2.10", features = ["json"] }
+
+[dev-dependencies]
+tokio-tungstenite = { version = "0.24", default-features = false, features = ["connect", "handshake"] }
+tower = "0.5"
