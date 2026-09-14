@@ -154,3 +154,18 @@ scripts/worktree.sh rm m1-server-extract
 5. README 可被陌生人理解：是什么/怎么部署/安全模型一句话。
 6. 主仓库侧镜像账本已登记本次同步（避免双源漂移）。
 
+
+## 12. 部署形态与 Cloudflare 边界（2026-09-15 定档）
+
+**CF 能做 rendezvous（握手/信令），做不了 TURN（中继）**——两种自托管形态由此成立：
+
+| 形态 | 载体 | 包含 | 打洞失败时 | 目录标注 |
+|---|---|---|---|---|
+| 完整中继节点 | VPS（docker compose） | rendezvous + coturn（UDP-only TURN） | TURN 中继兜底 | `capabilities.turn=true` |
+| 仅信令节点 | CF Workers / PaaS | rendezvous only | 明确报错（配客户端「仅直连」模式） | `capabilities.turn=false`，网页标「无中继兜底」 |
+
+- **为什么 CF 做不了中继**：TURN 需要 UDP socket + 中继分配端口段，Workers 无 UDP listener，平台模型无解；且 TCP 承载实时负载违反传输铁律。
+- **为什么 CF 能做信令**：rendezvous 全部是 HTTP/WSS 控制面（协议边界允许 TCP 的部分）；Workers + Durable Objects 支持 ws，全球边缘 + 自带证书 + 免费额度适合公益碰头点。
+- **移植成本（诚实口径）**：axum/tokio 长驻模型不能直接上 Workers——API 层需 Workers 版重写，邮箱/会话状态放 DO，落盘 JSON 换 KV/D1；**协议层零成本**（protocol-kit 纯函数禁 IO 即为 WASM 准备，编 WASM 后 transcript 逻辑原样复用，对拍 fixtures 继续锁定）。
+- **schema 演进**：`register` 增加 `capabilities` 字段（v1.1，向后兼容）；目录网页展示中统能力，禁止信令节点被误读为有兜底。
+- CF Workers 版实现排期在 M4 客户端接线之后（先立 VPS 形态，CF 形态第二波）。
