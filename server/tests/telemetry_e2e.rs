@@ -16,9 +16,31 @@ fn spawn_mock_directory() -> (String, mpsc::Receiver<(String, String, String)>) 
     let (tx, rx) = mpsc::channel();
     std::thread::spawn(move || {
         if let Ok((mut sock, _)) = listener.accept() {
-            let mut buf = [0u8; 8192];
-            let n = sock.read(&mut buf).unwrap_or(0);
-            let raw = String::from_utf8_lossy(&buf[..n]).to_string();
+            // 按 Content-Length 读齐请求（TCP 分段时 header/body 可能分批到达）
+            let mut raw_bytes: Vec<u8> = Vec::new();
+            let mut chunk = [0u8; 4096];
+            loop {
+                let n = sock.read(&mut chunk).unwrap_or(0);
+                if n == 0 {
+                    break;
+                }
+                raw_bytes.extend_from_slice(&chunk[..n]);
+                let header_end = raw_bytes.windows(4).position(|w| w == b"\r\n\r\n");
+                if let Some(pos) = header_end {
+                    let head = String::from_utf8_lossy(&raw_bytes[..pos]).to_ascii_lowercase();
+                    let cl: usize = head
+                        .lines()
+                        .find_map(|l| {
+                            l.strip_prefix("content-length: ")
+                                .and_then(|v| v.trim().parse().ok())
+                        })
+                        .unwrap_or(0);
+                    if raw_bytes.len() >= pos + 4 + cl {
+                        break;
+                    }
+                }
+            }
+            let raw = String::from_utf8_lossy(&raw_bytes).to_string();
             let header_end = raw.find("\r\n\r\n").unwrap_or(raw.len());
             let head = &raw[..header_end];
             let path = head
