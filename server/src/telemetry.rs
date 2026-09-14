@@ -40,6 +40,7 @@ pub fn spawn(directory_url: String, node_id: String) {
             });
             match ureq::post(&format!("{directory_url}/api/v1/report"))
                 .timeout(Duration::from_secs(10))
+                .set("Content-Type", "application/json")
                 .send_string(&body.to_string())
             {
                 Ok(_) => {}
