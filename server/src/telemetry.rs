@@ -14,12 +14,17 @@ pub static MAILBOX_REGISTRATIONS: AtomicU64 = AtomicU64::new(0);
 /// 会话请求累计次数（客户端 submit_session_request 调用）。
 pub static SESSION_REQUESTS: AtomicU64 = AtomicU64::new(0);
 
-/// 启动后台上报线程。上报失败只记 warning，绝不影响服务本身。
+/// 启动后台上报线程（生产入口，60 秒周期）。上报失败只记 warning，绝不影响服务本身。
 pub fn spawn(directory_url: String, node_id: String) {
+    spawn_with_interval(directory_url, node_id, Duration::from_secs(60))
+}
+
+/// 测试入口：可注入上报周期。
+pub fn spawn_with_interval(directory_url: String, node_id: String, interval: Duration) {
     std::thread::spawn(move || {
         let started = SystemTime::now();
         loop {
-            std::thread::sleep(Duration::from_secs(60));
+            std::thread::sleep(interval);
             let uptime_s = started
                 .duration_since(UNIX_EPOCH)
                 .ok()

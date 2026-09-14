@@ -268,10 +268,13 @@ fn parse_ice_urls(name: &str, value: String, allowed_schemes: &[&str]) -> Result
 pub async fn serve_from_env() -> Result<()> {
     let config = RelayConfig::from_env()?;
     if let Ok(directory_url) = std::env::var("HYPERCAST_DIRECTORY_URL") {
-        let node_id = std::env::var("HYPERCAST_NODE_ID")
-            .unwrap_or_else(|_| "unnamed-node".to_owned());
+        let node_id =
+            std::env::var("HYPERCAST_NODE_ID").unwrap_or_else(|_| "unnamed-node".to_owned());
         telemetry::spawn(directory_url, node_id.clone());
-        tracing::info!(node_id, "telemetry reporting enabled (opt-in, aggregates only)");
+        tracing::info!(
+            node_id,
+            "telemetry reporting enabled (opt-in, aggregates only)"
+        );
     }
     let bind = config.bind;
     let state = AppState::load(config).await?;
