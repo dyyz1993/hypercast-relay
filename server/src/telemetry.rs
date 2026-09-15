@@ -32,10 +32,15 @@ pub fn spawn_with_interval(directory_url: String, node_id: String, interval: Dur
                 .map(|d| d.as_secs())
                 .unwrap_or(0);
             let signal_url = std::env::var("HYPERCAST_NODE_PUBLIC_URL").ok();
+            // 已配置的 TURN 地址（目录据此做中继能力分级探测）
+            let turn_urls: Vec<String> = std::env::var("HYPERCAST_TURN_URLS")
+                .map(|v| v.split(',').map(str::trim).filter(|s| !s.is_empty()).map(str::to_owned).collect())
+                .unwrap_or_default();
             let body = serde_json::json!({
                 "schema": "hc-telemetry/1",
                 "node_id": node_id,
                 "signal_url": signal_url,
+                "turn_urls": turn_urls,
                 "protocol_version": PROTOCOL_VERSION,
                 "uptime_s": uptime_s,
                 "metrics": {
